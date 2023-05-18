@@ -6,6 +6,7 @@ let categories = [
   "Museums",
   "Wine Tastings",
   "Other",
+  "Local Sports",
 ];
 
 let activities = [
@@ -124,6 +125,7 @@ const activitiesListEl = document.getElementById("activitiesList");
 const activityTableEL = document.getElementById("activityTable");
 const activityTblBody = document.getElementById("activitytableBody");
 activityTableEL.style.display = "none";
+const categoryMessageEl = document.getElementById("categoryMessage");
 activityCategoryEl.onchange = generateActivitiesList;
 
 generateActivityCategory(categories);
@@ -139,17 +141,16 @@ function generateActivityCategory(array) {
 function generateActivitiesList() {
   console.log("generateActivitiesList start");
   const selectedCategory = activityCategoryEl.value;
-  displayTable(selectedCategory);
-
-  // let sizeCounter = 0;
-
   const selectedActivities = activities.filter(
     (activities) => activities.category === selectedCategory
   );
+  if (displayTable(selectedCategory, selectedActivities)) {
+    return;
+  }
+  console.log(selectedActivities);
   selectedActivities.forEach((activityObject) =>
     createActivityTable(activityTblBody, activityObject)
   );
-  document.getElementById("category").innerHTML = selectedCategory;
 }
 
 function createActivityTable(myTable, activity) {
@@ -166,15 +167,20 @@ function createActivityTable(myTable, activity) {
   cell4.innerHTML = activity.location;
   cell5.textContent = `$ ${activity.price}`;
 }
-function displayTable(category) {
+function displayTable(category, activitiesArray) {
   console.log("displayform start");
-  const tableRows = activityTblBody.innerHTML;
   activityTblBody.innerHTML = null;
-  if (category === "Welcome: Select A Category") {
+  categoryMessageEl.innerHTML = "";
+  document.getElementById("category").innerHTML = category;
+  if (activitiesArray.length === 0) {
     document.getElementById("logoImage").src =
       "./images/VisitorsBureauSmall.webp";
     document.getElementById("logoImage").alt = "Visitors Bureau logo";
     activityTableEL.style.display = "none";
+    categoryMessageEl.innerHTML = "Select A Category";
+    if (category != "Welcome")
+      categoryMessageEl.innerHTML = "No Local Events Right Now";
+    return true;
   } else {
     document.getElementById("logoImage").src = "";
     document.getElementById("logoImage").alt = "";
